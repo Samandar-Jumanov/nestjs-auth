@@ -5,8 +5,7 @@ import { AuthService } from './auth.service';
 import {  RegisterDto } from "./dto/register.dto"
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
-
-
+import { LocalGuard } from './guards/local.guard';
 
 
 
@@ -27,8 +26,7 @@ export class AuthController {
 
 
      @Put()
-     @UseGuards(AuthGuard("local"))
-
+     @UseGuards(LocalGuard)
      loginAccount( @Body() loginBody  : LoginDto){
          return this.authService.loginAccount(loginBody  )
      }
@@ -41,7 +39,7 @@ export class AuthController {
 
      @Delete()
      deleteAccount(){
-        
+           
      }
 
 

@@ -58,15 +58,14 @@ export class AuthService {
          })
 
 
-
          if(!user){
               throw new UnauthorizedException()
-         }
+         };
+         
 
-         const isPasswordMatch = user.password === loginDto.password;
+         const isPasswordMatch = user?.password === loginDto.password;
 
          if(!isPasswordMatch) throw  new  HttpException("Password did not match" , HttpStatus.BAD_REQUEST)
-
 
          const { password , ...result } = user;
 
