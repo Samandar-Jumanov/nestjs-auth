@@ -48,11 +48,8 @@ export class AuthService {
          })
 
          if(!user) return new UnauthorizedException();
-        
-         const isPasswordMatch = user?.password === loginDto.password;
-
-         if(!isPasswordMatch) throw  new  HttpException("Password did not match" , HttpStatus.BAD_REQUEST)
-
+         
+         if(user.password !== loginDto.password) return new  HttpException("Password did not match" , 403)
          const { password , ...result } = user;
 
          return  this.jwt.sign(result)
