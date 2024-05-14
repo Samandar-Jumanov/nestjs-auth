@@ -1,52 +1,25 @@
-import { Controller  , Get ,  Post, Put , Delete , Body , Param, Query, UseGuards  } from '@nestjs/common';
-
-
-import { AuthService } from './auth.service';
-import {  RegisterDto } from "./dto/register.dto"
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthService } from './auth.service';
 import { LocalGuard } from './guards/local.guard';
-
-
+import { Request } from 'express';
+import { JwtAuthGuard } from './guards/jwt.guard';
+// import { JwtAuthGuard } from './guards/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
-     constructor( private authService  : AuthService) {}
-     @Get()
-     getUsers(){
-               return this.authService.getAllUsers()
-     }
+  constructor(private authService: AuthService) {}
 
+  @Post()
+  @UseGuards(LocalGuard)
+  login(@Req() req: Request) {
+    return req.user;
+  }
 
-     @Post()
-     createAccount(@Body() authBody : RegisterDto ){
-            console.log({...authBody})
-            return this.authService.createUser(authBody)
-     }
-
-
-     @Put()
-     @UseGuards(LocalGuard)
-     loginAccount( @Body() loginBody  : LoginDto){
-         return this.authService.loginAccount(loginBody  )
-     }
-
-     @Get()
-     getUserQuery(@Query("role") role ? : "USER" | "ADMIN"){
-          return { role }
-     }
-
-
-     @Delete()
-     deleteAccount(){
-           
-     }
-
-
-     @Get(":id")
-     findOneUser(@Param("id") id : string ) {
-          return this.authService.getUser(id)
-     }
-
-
+  @Get('status')
+  @UseGuards(JwtAuthGuard)
+  status(@Req() req: Request) {
+    return req.user;
+  }
 }

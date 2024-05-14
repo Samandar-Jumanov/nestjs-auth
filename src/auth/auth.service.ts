@@ -2,15 +2,12 @@ import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@n
 import { RegisterDto  } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import prisma from "../utils/lib/prisma"
-import { generateToken } from 'src/utils/token';
 import { JwtService } from '@nestjs/jwt';
 
 
 @Injectable()
 export class AuthService {
-
-
-
+ 
      constructor(   private jwt : JwtService) {}
 
    async   createUser(body : RegisterDto)  {
@@ -18,24 +15,16 @@ export class AuthService {
                where : { username : body.username}
           })
 
-
-
-          console.log({
-                ...body
-          });
-
-          if(!body || !body.username || !body.password) {
-                    throw new HttpException("Username or Password not provided" , HttpStatus.BAD_REQUEST)
+          if(!body || 
+               !body.username ||
+                !body.password) {
+               throw new HttpException("Username or Password not provided" , HttpStatus.BAD_REQUEST)
           }
-
 
 
           if(user){ 
                  throw  new HttpException("User already exists" , HttpStatus.BAD_REQUEST)
           }
-
-
-        
          
           const newUser = await prisma.user.create({
               data : {
@@ -51,28 +40,24 @@ export class AuthService {
 
 
 
+
     async  loginAccount( loginDto: LoginDto , ) {
          const user = await prisma.user.findUnique({
               where : { username : loginDto.username },
               select : { username :true , password : true , id : true  }
          })
 
-
-         if(!user){
-              throw new UnauthorizedException()
-         };
-         
-
+         if(!user) return new UnauthorizedException();
+        
          const isPasswordMatch = user?.password === loginDto.password;
 
          if(!isPasswordMatch) throw  new  HttpException("Password did not match" , HttpStatus.BAD_REQUEST)
 
          const { password , ...result } = user;
 
-        return  this.jwt.sign(result)
+         return  this.jwt.sign(result)
 
     }
-
 
     async getAllUsers(){
        try {
