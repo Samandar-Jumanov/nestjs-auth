@@ -3,13 +3,14 @@ import { RegisterDto  } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
  
      constructor(   private jwt : JwtService , private prisma : PrismaService) {}
 
-   async   createUser(body : RegisterDto)  {
+   async   createUser(body : Prisma.UserCreateInput)  {
           const user = await this.prisma.user.findUnique({
                where : { username : body.username}
           })
