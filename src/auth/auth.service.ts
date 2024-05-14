@@ -1,17 +1,16 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { RegisterDto  } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import prisma from "../utils/lib/prisma"
 import { JwtService } from '@nestjs/jwt';
-
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
  
-     constructor(   private jwt : JwtService) {}
+     constructor(   private jwt : JwtService , private prisma : PrismaService) {}
 
    async   createUser(body : RegisterDto)  {
-          const user = await prisma.user.findUnique({
+          const user = await this.prisma.user.findUnique({
                where : { username : body.username}
           })
 
@@ -26,7 +25,7 @@ export class AuthService {
                  throw  new HttpException("User already exists" , 409)
           }
          
-          const newUser = await prisma.user.create({
+          const newUser = await this.prisma.user.create({
               data : {
                  username : body.username ,
                  password : body.password 
@@ -42,7 +41,7 @@ export class AuthService {
 
 
     async  loginAccount( loginDto: LoginDto , ) {
-         const user = await prisma.user.findUnique({
+         const user = await this.prisma.user.findUnique({
               where : { username : loginDto.username },
               select : { username :true , password : true , id : true  }
          })
@@ -59,7 +58,7 @@ export class AuthService {
     async getAllUsers(){
        try {
 
-          const allUsers = await prisma.user.findMany({
+          const allUsers = await this.prisma.user.findMany({
                select  :{
                      id : true ,
                       username : true ,
@@ -80,7 +79,7 @@ export class AuthService {
 
     async deleteOneUser( id : string ) {
        
-         const user = await prisma.user.findUnique({
+         const user = await this.prisma.user.findUnique({
             where : { id }
          })
 
@@ -88,7 +87,7 @@ export class AuthService {
               throw new HttpException("Uer not found " , HttpStatus.NOT_FOUND)
          }
 
-         await prisma.user.delete({
+         await this.prisma.user.delete({
             where : { id }
          })
 
@@ -98,7 +97,7 @@ export class AuthService {
 
 
     async getUser( id : string ) {
-       const user = await prisma.user.findUnique({
+       const user = await  this.prisma.user.findUnique({
             where : { id },
             select : {
                  username : true ,
@@ -111,7 +110,6 @@ export class AuthService {
        if(!user) {
             throw new HttpException("User not found" , HttpStatus.NOT_FOUND)
        }
-
 
 
        return user 
