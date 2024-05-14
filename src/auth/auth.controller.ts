@@ -17,6 +17,11 @@ export class AuthController {
     return req.user;
   }
 
+  @Post("create-account")
+  createAccount( @Body()  register : RegisterDto) {
+               return this.authService.createUser(register) // username and password 
+  }
+
   @Get('status')
   @UseGuards(JwtAuthGuard)
   status(@Req() req: Request) {

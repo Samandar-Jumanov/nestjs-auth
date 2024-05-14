@@ -23,7 +23,7 @@ export class AuthService {
 
 
           if(user){ 
-                 throw  new HttpException("User already exists" , HttpStatus.BAD_REQUEST)
+                 throw  new HttpException("User already exists" , 409)
           }
          
           const newUser = await prisma.user.create({

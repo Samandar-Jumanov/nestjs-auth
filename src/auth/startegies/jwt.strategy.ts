@@ -11,8 +11,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: 'abc123',
     });
   }
-  
+
   validate(payload: any) {
     return payload;
   }
+
+  
 }
