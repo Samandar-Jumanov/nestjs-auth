@@ -1,9 +1,12 @@
-import { Controller  , Get ,  Post, Put , Delete , Body  } from '@nestjs/common';
+import { Controller  , Get ,  Post, Put , Delete , Body , Param, Query, UseGuards  } from '@nestjs/common';
 
 
 import { AuthService } from './auth.service';
 import {  RegisterDto } from "./dto/register.dto"
 import { LoginDto } from './dto/login.dto';
+import { AuthGuard } from '@nestjs/passport';
+
+
 
 
 
@@ -11,27 +14,28 @@ import { LoginDto } from './dto/login.dto';
 export class AuthController {
      constructor( private authService  : AuthService) {}
      @Get()
-     getUser(){
-              
+     getUsers(){
+               return this.authService.getAllUsers()
      }
 
 
      @Post()
      createAccount(@Body() authBody : RegisterDto ){
+            console.log({...authBody})
             return this.authService.createUser(authBody)
      }
 
 
-     @Post ()
+     @Put()
+     @UseGuards(AuthGuard("local"))
+
      loginAccount( @Body() loginBody  : LoginDto){
-         return this.authService.loginAccount(loginBody)
+         return this.authService.loginAccount(loginBody  )
      }
 
-
-
-     @Put()
-     updateAccount(@Body()  loginBody : LoginDto) {
-           
+     @Get()
+     getUserQuery(@Query("role") role ? : "USER" | "ADMIN"){
+          return { role }
      }
 
 
@@ -39,4 +43,12 @@ export class AuthController {
      deleteAccount(){
         
      }
+
+
+     @Get(":id")
+     findOneUser(@Param("id") id : string ) {
+          return this.authService.getUser(id)
+     }
+
+
 }
